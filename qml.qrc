@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>MainInterface.qml</file>
+        <file>GameMenu.qml</file>
+        <file>LevelMenu.qml</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>res/background.jpg</file>
+        <file>res/card.png</file>
+        <file>res/exit.svg</file>
+        <file>res/textBackground.png</file>
+        <file>res/divider-fade-000.png</file>
+        <file>res/tipVoice.wav</file>
+        <file>res/clickVoice.wav</file>
+        <file>res/Turnedcard.png</file>
+    </qresource>
+</RCC>
