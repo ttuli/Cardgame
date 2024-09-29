@@ -8,5 +8,8 @@
         <file>res/tipVoice.wav</file>
         <file>res/clickVoice.wav</file>
         <file>res/Turnedcard.png</file>
+        <file>res/ArrowPath.svg</file>
+        <file>res/reset.svg</file>
+        <file>res/pageturn-102978.wav</file>
     </qresource>
 </RCC>

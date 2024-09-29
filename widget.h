@@ -17,5 +17,12 @@ private:
 
     QObject *rootobject;
 
+    QStringList GameSetting;
+
+private:
+
+
+private slots:
+    void initGame(int index);
 };
 #endif // WIDGET_H

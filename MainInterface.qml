@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtMultimedia
 
 Rectangle
 {
@@ -13,32 +14,145 @@ Rectangle
         anchors.fill: parent;
     }
 
+    property string s:" ";
+
     signal cloSig();
-    signal returnSig();
     signal checkStateSig();
+    signal resetSig();
     signal allOkSig();
+    signal initGame(int pos);
+
+    Timer
+    {
+        id:delayCheck;
+        interval: 100;
+        repeat: true;
+        onTriggered:
+        {
+            checkStateSig();
+        }
+    }
 
     onCheckStateSig: function()
     {
+        delayCheck.stop();
         for(var i=0;i<16;i++)
         {
             if(gridview.itemAtIndex(i).visible===true)
             {
-                if(!gridview.itemAtIndex(i).checkRotation())
+                if(!(gridview.itemAtIndex(i).checkRotation()))
                 {
                     return;
                 }
             }
         }
-        console.log("allok");
         allOkSig();
     }
 
-    onReturnSig:function()
+    Popup
     {
-        gameMenu.visible=true;
-        ruleInterface.visible=false;
-        gaming.visible=false;
+        id:successTip;
+        anchors.centerIn: parent;
+        width: 320;
+        height: 300;
+        visible: false;
+        modal: true;
+        //closePolicy: "NoAutoClose";
+
+        enter: Transition {
+                    NumberAnimation
+                    {
+                        properties: "opacity";
+                        from: 0;
+                        to:1;
+                        duration: 80;
+                    }
+                }
+        exit: Transition {
+            NumberAnimation
+            {
+                properties: "opacity";
+                from: 1;
+                to:0;
+                duration: 80;
+            }
+        }
+        background:Rectangle
+        {
+            color:"white";
+            radius: 5;
+            Text {
+                id:successPass
+                text: qsTr("通过!");
+                font.bold: true;
+                font.pixelSize: 30;
+                anchors.horizontalCenter: parent.horizontalCenter;
+                anchors.top: parent.top;
+                anchors.topMargin: 10;
+            }
+        }
+    }
+
+    onAllOkSig: function()
+    {
+        successTip.open();
+    }
+
+    function setGame(a)
+    {
+        s=a;
+        setVisible(false,false,true,false);
+        for(var i=0;i<16;i++)
+        {
+            gridview.itemAtIndex(i).resetAll();
+            gridview.itemAtIndex(i).visible=true;
+        }
+
+        for(var i=0;i<s.length;i++)
+        {
+            if(s[i]==="0")
+            gridview.itemAtIndex(i).visible=false;
+        }
+
+    }
+
+    function setVisible(vgameMenu,vruleInterface,vgaming,vlevelMenu)
+    {
+        gameMenu.visible=vgameMenu;
+        ruleInterface.visible=vruleInterface;
+        gaming.visible=vgaming;
+        levelMenu.visible=vlevelMenu;
+    }
+
+    onResetSig: function()
+    {
+        pageturn.play();
+        for(var i=0;i<16;i++)
+        {
+            if(gridview.itemAtIndex(i).visible===true)
+            gridview.itemAtIndex(i).resetAll();
+        }
+    }
+
+    SoundEffect
+    {
+        id:pageturn;
+        source: "qrc:/new/prefix1/res/pageturn-102978.wav";
+    }
+
+    LevelMenu
+    {
+        id:levelMenu;
+        anchors.fill: parent;
+        visible: false;
+        onSonReturnSig: function()
+        {
+            setVisible(true,false,false,false);
+        }
+        onSonChoiceSig:function(pos)
+        {
+            initGame(pos);
+        }
     }
 
     GameMenu
@@ -51,15 +165,11 @@ Rectangle
         }
         onSonStartSig: function()
         {
-            gameMenu.visible=false;
-            ruleInterface.visible=false;
-            gaming.visible=true;
+            setVisible(false,false,false,true);
         }
         onSonRuleSig:function()
         {
-            gameMenu.visible=false;
-            ruleInterface.visible=true;
-            gaming.visible=false;
+            setVisible(false,true,false,false);
         }
     }
 
@@ -74,10 +184,44 @@ Rectangle
         Image
         {
             anchors.top: parent.top;
+            anchors.left: parent.left;
+            anchors.margins: 10;
+            width: 40;
+            height: 40;
+            source: "/new/prefix1/res/reset.svg";
+            ToolTip
+            {
+                id:resetTip
+                visible: false;
+                text: "重置";
+            }
+            MouseArea
+            {
+                anchors.fill: parent;
+                cursorShape: Qt.PointingHandCursor;
+                hoverEnabled: true;
+                onEntered:
+                {
+                    resetTip.visible=true;
+                }
+                onExited:
+                {
+                    resetTip.visible=false;
+                }
+                onClicked:
+                {
+                    resetSig();
+                }
+            }
+        }
+
+        Image
+        {
+            anchors.top: parent.top;
             anchors.right: parent.right;
             anchors.margins: 10;
-            width: 35;
-            height: 35;
+            width: 40;
+            height: 40;
             source: "/new/prefix1/res/exit.svg";
             ToolTip
             {
@@ -93,7 +237,7 @@ Rectangle
                 hoverEnabled: true;
                 onClicked:
                 {
-                    backgroundRect.returnSig();
+                    setVisible(true,false,false,false);
                 }
                 onEntered:
                 {
@@ -121,9 +265,9 @@ Rectangle
                 width: 150;
                 height: 200;
                 color:"transparent";
-                visible:true;
 
-                property var dx:[-1,4,1,-4];
+                property var dx:[-1,0,1,0];
+                property var dy: [0,1,0,-1]
                 property bool isclicked: false;
 
                 onIsclickedChanged:function()
@@ -138,9 +282,15 @@ Rectangle
 
                 function checkRotation()
                 {
-                    if(rotate.angle/180%2===0)
+                    if((rotate.angle/180)%2===0)
                         return false;
                     else return true;
+                }
+
+                function resetAll()
+                {
+                    if(rotate.angle/180%2!==0)
+                        rotate.angle+=180;
                 }
 
                 Flipable
@@ -180,16 +330,17 @@ Rectangle
                         onClicked:
                         {
                             rotate.angle+=180;
+                            if(!pageturn.playing)pageturn.play();
                             for(var i=0;i<4;i++)
                             {
-                                var a=index+dx[i];
-                                if(0<=a&&a<=15)
+                                var a=Math.floor(index/4)+dx[i];
+                                var b=index%4+dy[i];
+                                if(0<=a&&b>=0&&a<4&&b<4)
                                 {
-                                    gridview.itemAtIndex(a).setRotation();
+                                    gridview.itemAtIndex(a*4+b).setRotation();
                                 }
                             }
-                            checkStateSig();
-
+                            delayCheck.start();
                         }
                     }//鼠标区域
                 }//flipable
@@ -227,7 +378,7 @@ Rectangle
                 hoverEnabled: true;
                 onClicked:
                 {
-                    backgroundRect.returnSig();
+                    setVisible(true,false,false,false);
                 }
                 onEntered:
                 {
