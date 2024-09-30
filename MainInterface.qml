@@ -15,6 +15,7 @@ Rectangle
     }
 
     property string s:" ";
+    property int currentlevel:0;
 
     signal cloSig();
     signal checkStateSig();
@@ -53,11 +54,11 @@ Rectangle
     {
         id:successTip;
         anchors.centerIn: parent;
-        width: 320;
-        height: 300;
+        width: 250;
+        height: 200;
         visible: false;
         modal: true;
-        //closePolicy: "NoAutoClose";
+        closePolicy: "NoAutoClose";
 
         enter: Transition {
                     NumberAnimation
@@ -81,6 +82,7 @@ Rectangle
         {
             color:"white";
             radius: 5;
+
             Text {
                 id:successPass
                 text: qsTr("通过!");
@@ -90,11 +92,97 @@ Rectangle
                 anchors.top: parent.top;
                 anchors.topMargin: 10;
             }
-        }
-    }
+            Rectangle
+            {
+                id:nextrec;
+                anchors.left: parent.left;
+                anchors.bottom: parent.bottom;
+                anchors.bottomMargin: 20;
+                anchors.leftMargin: 10;
+                visible: if(currentlevel+2>totalNumber)
+                             return false;
+                else return true;
+                color:"transparent";
+                width: 100;
+                height: 60;
+
+                Image {
+                    anchors.fill: parent;
+                    source: "/new/prefix1/res/btn.png";
+                }
+                Text {
+                    anchors.centerIn: parent;
+                    text: qsTr("下一关");
+                    font.pixelSize: 20;
+                    font.bold: true;
+                    color: "white";
+                }
+                MouseArea
+                {
+                    anchors.fill: parent;
+                    hoverEnabled: true;
+                    onEntered:
+                    {
+                        hoverVoice.stop();
+                        hoverVoice.play();
+                    }
+                    onClicked:
+                    {
+                        clickVoice.stop();
+                        clickVoice.play();
+                        initGame(currentlevel+1);
+                        currentlevel++;
+                        successTip.close();
+                    }
+                }
+            }
+            Rectangle
+            {
+                id:returnMenu;
+                anchors.right: parent.right;
+                anchors.bottom: parent.bottom;
+                anchors.bottomMargin: 20;
+                anchors.rightMargin: 10;
+
+                color:"transparent";
+                width: 100;
+                height: 60;
+
+                Image {
+                    anchors.fill: parent;
+                    source: "/new/prefix1/res/btn.png";
+                }
+                Text {
+                    anchors.centerIn: parent;
+                    text: qsTr("返回");
+                    font.pixelSize: 20;
+                    font.bold: true;
+                    color: "white";
+                }
+                MouseArea
+                {
+                    anchors.fill: parent;
+                    hoverEnabled: true;
+                    onEntered:
+                    {
+                        hoverVoice.stop();
+                        hoverVoice.play();
+                    }
+                    onClicked:
+                    {
+                        clickVoice.stop();
+                        clickVoice.play();
+                        setVisible(false,false,false,true);
+                        successTip.close();
+                    }
+                }
+            }//返回
+        }//background
+    }//Popup
 
     onAllOkSig: function()
     {
+        successVoice.play();
         successTip.open();
     }
 
@@ -136,8 +224,27 @@ Rectangle
 
     SoundEffect
     {
+        id:successVoice;
+        source:"qrc:/new/prefix1/res/success.wav";
+        volume: 0.2;
+    }
+
+    SoundEffect
+    {
         id:pageturn;
         source: "qrc:/new/prefix1/res/pageturn-102978.wav";
+    }
+
+    SoundEffect
+    {
+        id:hoverVoice;
+        source: "qrc:/new/prefix1/res/tipVoice.wav";
+    }
+
+    SoundEffect
+    {
+        id:clickVoice;
+        source: "qrc:/new/prefix1/res/clickVoice.wav";
     }
 
     LevelMenu
@@ -151,6 +258,7 @@ Rectangle
         }
         onSonChoiceSig:function(pos)
         {
+            currentlevel=pos;
             initGame(pos);
         }
     }

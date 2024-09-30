@@ -11,5 +11,9 @@
         <file>res/ArrowPath.svg</file>
         <file>res/reset.svg</file>
         <file>res/pageturn-102978.wav</file>
+        <file>res/btn.png</file>
+        <file>res/popupBack.png</file>
+        <file>res/success.wav</file>
+        <file>res/PuzzlePiece.svg</file>
     </qresource>
 </RCC>

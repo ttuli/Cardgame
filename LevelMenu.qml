@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
+import QtMultimedia
 
 Rectangle
 {
@@ -18,6 +19,18 @@ Rectangle
         font.bold: true;
         anchors.horizontalCenter: parent.horizontalCenter;
         color:"white";
+    }
+
+    SoundEffect
+    {
+        id:hoverVoice;
+        source: "qrc:/new/prefix1/res/tipVoice.wav";
+    }
+
+    SoundEffect
+    {
+        id:clickVoice;
+        source: "qrc:/new/prefix1/res/clickVoice.wav";
     }
 
     //
@@ -79,6 +92,8 @@ Rectangle
                     onEntered:
                     {
                         parent.scale=1.1;
+                        hoverVoice.stop();
+                        hoverVoice.play();
                     }
                     onExited:
                     {
@@ -86,6 +101,8 @@ Rectangle
                     }
                     onClicked:
                     {
+                        clickVoice.stop();
+                        clickVoice.play();
                         sonChoiceSig(index);
                     }
                 }

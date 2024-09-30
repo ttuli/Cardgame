@@ -124,10 +124,12 @@ Rectangle
             onEntered:
             {
                 btnArrow.anchors.centerIn=startbtn;
+                hoverVoice.stop();
                 hoverVoice.play();
             }
             onClicked:
             {
+                clickVoice.stop();
                 clickVoice.play();
                 btnArrow.width=btnWidth+arrow1.width*2;
                 startbtnClicked=true;
@@ -159,10 +161,12 @@ Rectangle
             onEntered:
             {
                 btnArrow.anchors.centerIn=rule;
+                hoverVoice.stop();
                 hoverVoice.play();
             }
             onClicked:
             {
+                clickVoice.stop();
                 clickVoice.play();
                 btnArrow.width=btnWidth+arrow1.width*2;
                 ruleClicked=true;
@@ -193,10 +197,12 @@ Rectangle
             onEntered:
             {
                 btnArrow.anchors.centerIn=exitbtn;
+                hoverVoice.stop();
                 hoverVoice.play();
             }
             onClicked:
             {
+                clickVoice.stop();
                 clickVoice.play();
                 btnArrow.width=btnWidth+arrow1.width*2;
                 clobtnClicked=true;
