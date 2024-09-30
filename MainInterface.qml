@@ -501,12 +501,15 @@ Rectangle
 
         Text
         {
-            anchors.top: parent.top;
+            anchors.fill: parent;
+            wrapMode: Text.WordWrap;
             anchors.topMargin: 60;
+            anchors.rightMargin: 10;
+            anchors.leftMargin: 10;
             color: "white";
             font.pixelSize: 30;
             font.bold: true;
-            text: qsTr("规则:sadddddddddd");
+            text: qsTr("规则:\n初始每个牌都为背面，点击可以翻转该牌，同时其上下左右(若存在)都变为自身相反的状态，当所有牌都为正面时通过");
         }
     }
 
